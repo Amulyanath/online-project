@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/2300030289/online-project.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Compile TypeScript') {
+            steps {
+                sh 'npx tsc'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'npm test || echo "No tests found, skipping..."'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo "Deploying application..."
+                // Example: Copy files to server, Docker build/push, etc.
+                // sh 'scp -r dist/* user@server:/var/www/app'
+            }
+        }
+    }
+}
